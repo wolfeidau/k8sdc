@@ -1,6 +1,6 @@
 ---
 cluster_name:   kubernetes
-interface:      eth1
+interface:      ens33
 main_ip:        "{{ hostvars[inventory_hostname]['ansible_' + interface].ipv4.address }}"
 api_server_ip:  "{{ hostvars[groups['kub-master'][0]]['ansible_' + interface].ipv4.address }}"
 use_firewalld:  no

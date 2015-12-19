@@ -1,14 +1,16 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 
+AutoNetwork.default_pool = '192.168.100.0/24'
+
 unless Vagrant.has_plugin?("vagrant-hostmanager")
   raise 'vagrant-hostmanager plugin is required'
 end
 
 Vagrant.configure(2) do |config|
 
-  config.vm.box = "box-cutter/fedora22"
-  config.vm.box_version = "3.0.1"
+  config.vm.box = "bento/fedora-22"
+  config.vm.box_version = "2.2.2"
 
   num_nodes = (ENV['NUM_NODES'] || 2).to_i
 
@@ -21,6 +23,10 @@ Vagrant.configure(2) do |config|
     config.vm.define "node#{node_index}.k8sdc.io" do |node|
       node.vm.hostname = "node#{node_index}.k8sdc.io"
       node.vm.network :private_network, ip: "192.168.100.#{110 + n}"
+      node.vm.provider "vmware_fusion" do |v|
+          v.vmx["numvcpus"] = "2"
+          v.vmx["memsize"] = "2048"
+      end
       node.vm.provider "virtualbox" do |vbox|
         vbox.memory = 2048
         vbox.cpus = 2
@@ -33,6 +39,10 @@ Vagrant.configure(2) do |config|
   config.vm.define "master.k8sdc.io" do |master|
     master.vm.hostname = "master.k8sdc.io"
     master.vm.network :private_network, ip: "192.168.100.100"
+    master.vm.provider "vmware_fusion" do |v|
+        v.vmx["numvcpus"] = "2"
+        v.vmx["memsize"] = "1024"
+    end
     master.vm.provider "virtualbox" do |vbox|
       vbox.memory = 1024
       vbox.cpus = 2
